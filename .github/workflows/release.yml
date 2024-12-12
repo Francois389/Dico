@@ -1,0 +1,39 @@
+name: Manual Go Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release'
+        required: true
+        default: '0.1.0'
+
+jobs:
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Build Go project
+        run: |
+          GOOS=linux GOARCH=amd64 go build -o myproject-linux
+          GOOS=darwin GOARCH=amd64 go build -o myproject-macos
+          GOOS=windows GOARCH=amd64 go build -o myproject-windows.exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          files: |
+            myproject-linux
+            myproject-macos
+            myproject-windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
