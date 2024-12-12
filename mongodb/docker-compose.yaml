@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+    mongodb:
+        image: mongo:latest
+        container_name: mongodb-api-mot
+        ports:
+            - "27017:27017"
+        volumes:
+            - mongodb_data:/data/db
+            - ./init-db.js:/docker-entrypoint-initdb.d/init-db.js
+        environment:
+            - MONGO_INITDB_DATABASE=api-mot
+
+volumes:
+    mongodb_data:
