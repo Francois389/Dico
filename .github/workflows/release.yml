@@ -8,6 +8,9 @@ on:
         required: true
         default: '0.1.0'
 
+permissions:
+  contents: write 
+
 jobs:
   release:
     name: Create Release
