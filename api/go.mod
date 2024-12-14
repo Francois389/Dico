@@ -1,4 +1,4 @@
-module API-Mot
+module Dico
 
 go 1.23
 
