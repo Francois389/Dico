@@ -1,16 +1,18 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"sync"
+	"time"
 )
 
 type Singleton struct {
 	// Add fields here
 	collection *mongo.Collection
-	client *mongo.Client
+	client     *mongo.Client
 }
 
 var instance *Singleton
@@ -31,16 +33,23 @@ func (s *Singleton) getCollection() *mongo.Collection {
 	return s.collection
 }
 
-func getClient(url string) *mongo.Client {
-	client, err := mongo.Connect(options.Client().ApplyURI(url))
+func getClient(ctx context.Context, url string) (*mongo.Client, error) {
+	// Configurer un timeout de connexion
+	clientOptions := options.Client().ApplyURI(url).SetConnectTimeout(10 * time.Second)
+
+	client, err := mongo.Connect(clientOptions)
 	if err != nil {
-		fmt.Println("Error while connecting to the database")
-		panic(err)
+		return nil, fmt.Errorf("erreur de connexion à la base de données : %v", err)
 	}
 
-	fmt.Println("Connected to the database")
+	// Vérifier que la connexion est établie
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		return nil, fmt.Errorf("impossible de ping la base de données : %v", err)
+	}
 
-	return client
+	fmt.Println("Connecté à la base de données")
+	return client, nil
 }
 
 func getDatabase(client *mongo.Client, databaseName string) *mongo.Database {
@@ -55,19 +64,35 @@ func GetCollection() *mongo.Collection {
 	return GetInstance().getCollection()
 }
 
-func Init(url, databaseName, collectionName string) {
+func Init(url, databaseName, collectionName string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
 	instance := GetInstance()
 
-	client := getClient(url)
+	client, err := getClient(ctx, url)
+	if err != nil {
+		return fmt.Errorf("erreur lors de l'initialisation du client : %v", err)
+	}
+
 	instance.client = client
 	database := getDatabase(client, databaseName)
 
 	instance.SetCollection(getCollection(database, collectionName))
+	return nil
 }
 
-func Close() {
-	err := instance.client.Disconnect(nil)
-	if err != nil {
-		panic(err)
+func Close() error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	if instance == nil || instance.client == nil {
+		return nil
 	}
+
+	err := instance.client.Disconnect(ctx)
+	if err != nil {
+		return fmt.Errorf("erreur lors de la déconnexion : %v", err)
+	}
+	return nil
 }
