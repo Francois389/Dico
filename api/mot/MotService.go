@@ -21,7 +21,7 @@ func GetMotsFirstLetter(firstLetter string) []Mot {
 }
 
 
-func GetMotFirstLetter(firstLetter string) Mot {
+func GetMotFirstLetter(firstLetter string) (Mot, error) {
 	var mots []Mot
 	collection := db.GetCollection()
 
@@ -32,5 +32,19 @@ func GetMotFirstLetter(firstLetter string) Mot {
 	sampleStage := bson.D{{"$sample", bson.D{{"size", 1}}}}
 	cursor, _ := collection.Aggregate(ctx, mongo.Pipeline{matchStage, sampleStage})
 	_ = cursor.All(context.TODO(), &mots)
-	return mots[0]
+
+	var err error
+	var resultat Mot
+
+	if len(mots) == 0 {
+		err = mongo.ErrNoDocuments
+	} else {
+		resultat = mots[0]
+	}
+
+	return resultat, err
+}
+
+func NewMot(word string) Mot {
+	return Mot{Word: word, Length: len(word), FirstLetter: string(word[0])}
 }
