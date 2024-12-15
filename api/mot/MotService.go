@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func GetMotsFirstLetter(firstLetter string) []Mot {
+func GetMotsFirstLetter(firstLetter string) ([]Mot, error) {
 	var mots []Mot
 	collection := db.GetCollection()
 
@@ -17,7 +17,17 @@ func GetMotsFirstLetter(firstLetter string) []Mot {
 
 	cursor, _ := collection.Find(ctx, bson.D{{"first_letter", firstLetter}})
 	_ = cursor.All(context.TODO(), &mots)
-	return mots
+
+	var err error
+	var resultat []Mot
+
+	if len(mots) == 0 {
+		err = mongo.ErrNoDocuments
+	} else {
+		resultat = mots
+	}
+
+	return resultat, err
 }
 
 
