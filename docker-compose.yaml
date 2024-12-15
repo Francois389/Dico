@@ -1,0 +1,9 @@
+version: '3.8'
+services:
+    dico-db:
+        image: mongo:6.0
+        container_name: dico-mongodb
+        environment:
+            - MONGO_INITDB_DATABASE=dico-db
+        ports:
+            - "27027:27017"

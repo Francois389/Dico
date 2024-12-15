@@ -1,15 +1,15 @@
 package main
 
 import (
-	"API-Mot/db"
-	"API-Mot/mot"
+	"Dico/db"
+	"Dico/mot"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	fmt.Println("Sarting...")
-	db.Init("mongodb://localhost:27017", "api-mot", "mots")
+	db.Init("mongodb://localhost:27027", "dico-db", "mots")
 
 	r := gin.Default()
 
@@ -25,4 +25,3 @@ func main() {
 		db.Close()
 	}()
 }
-
