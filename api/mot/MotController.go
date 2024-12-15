@@ -3,6 +3,7 @@ package mot
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"unicode/utf8"
 )
 
 func SetUpRoutes(c *gin.Engine) {
@@ -27,15 +28,15 @@ func GetMotsFirsLetter( c *gin.Context) {
 func GetMotFirsLetter( c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	if len(firstLetter) != 1 {
+	if utf8.RuneCountInString(firstLetter) != 1 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": InvalidFirstLetter})
-	}
+	} else {
+		mot, err := GetMotFirstLetter(firstLetter)
+		if err != nil {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No word that starts with a " + firstLetter})
+			return
+		}
 
-	mot, err := GetMotFirstLetter(firstLetter)
-	if err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "No word that starts with a " + firstLetter})
-		return
+		c.JSON(http.StatusOK, mot)
 	}
-
-	c.JSON(http.StatusOK, mot)
 }
