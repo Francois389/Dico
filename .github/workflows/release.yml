@@ -26,17 +26,17 @@ jobs:
 
       - name: Build Go project
         run: |
-          GOOS=linux GOARCH=amd64 go build -o dico-linux
-          GOOS=darwin GOARCH=amd64 go build -o dico-macos
-          GOOS=windows GOARCH=amd64 go build -o dico-windows.exe
+          GOOS=linux GOARCH=amd64 go build -o dico-linux -C api
+          GOOS=darwin GOARCH=amd64 go build -o dico-macos -C api
+          GOOS=windows GOARCH=amd64 go build -o dico-windows.exe -C api
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ github.event.inputs.version }}
           files: |
-            myproject-linux
-            myproject-macos
-            myproject-windows.exe
+            api/dico-linux
+            api/dico-macos
+            api/dico-windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
