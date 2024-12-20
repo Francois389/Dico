@@ -26,9 +26,9 @@ jobs:
 
       - name: Build Go project
         run: |
-          GOOS=linux GOARCH=amd64 go build -o dico-linux -C api
-          GOOS=darwin GOARCH=amd64 go build -o dico-macos -C api
-          GOOS=windows GOARCH=amd64 go build -o dico-windows.exe -C api
+          GOOS=linux GOARCH=amd64 go build -C api -o dico-linux
+          GOOS=darwin GOARCH=amd64 go build -C api -o dico-macos
+          GOOS=windows GOARCH=amd64 go build -C api -o dico-windows.exe
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
