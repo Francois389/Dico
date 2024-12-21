@@ -2,3 +2,6 @@
 .idea/workspace.xml
 
 api/populate/mots.txt
+
+desktop.ini
+*.exe

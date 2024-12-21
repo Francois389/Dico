@@ -27,7 +27,7 @@ Une fois que la base de donnée est initialisé, vous pouvez executer le serveur
 
 ## Utilisation de l'API
 
-Voici la liste des routes qui sont actuellement accessible :
+Voici la liste des routes qui sont actuellement accessibles :
 
 Tous les résultats de mots sont renvoyé sous cette forme :
 
@@ -41,8 +41,58 @@ Tous les résultats de mots sont renvoyé sous cette forme :
 
 ### 1. `mots/{lettre}`
 
-Renvoie tous les mots qui commence par la lettre fournie
+Renvoie tous les mots qui commencent par la lettre fournie
+
+<details>
+  <summary>Erreur possible</summary>
+
+- Si la lettre fournie ne fait pas 1 caractère, une erreur sera renvoyé :
+
+`400 Bad Request`
+```json
+{
+  "error": "Invalid first letter. Expected one character."
+}
+```
+Exemple : `mots/abc` renverra cette erreur.
+
+- Si aucun mot ne commence par la lettre fournie, une erreur sera renvoyé :
+
+`404 Not Found`
+```json
+{
+  "error": "No words start with a (╚)"
+}
+```
+Exemple : `mots/╚` renverra cette erreur.
+
+</details>
 
 ### 2. `mot/{lettre}`
 
 Renvoie un mot choisi aléatoirement qui commence par la lettre fournie.
+
+<details>
+  <summary>Erreur possible</summary>
+
+- Si la lettre fournie ne fait pas 1 caractère, une erreur sera renvoyé :
+
+`400 Bad Request`
+```json
+{
+  "error": "Invalid first letter. Expected one character."
+}
+```
+Exemple : `mot/abc` renverra cette erreur.
+
+- Si aucun mot ne commence par la lettre fournie, une erreur sera renvoyé :
+
+`404 Not Found`
+```json
+{
+  "error": "No words start with a (╚)"
+}
+```
+Exemple : `mot/╚` renverra cette erreur.
+
+</details>
