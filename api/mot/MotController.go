@@ -25,8 +25,9 @@ func GetMotsFirsLetter( c *gin.Context) {
 		fmt.Println("Invalid first letter")
 		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
 	} else {
-		fmt.Println("Getting mots")
+
 		mots, err := GetMotsFirstLetter(firstLetter)
+
 		if err != nil {
 			c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
 			return
