@@ -54,7 +54,3 @@ func GetMotFirstLetter(firstLetter string) (Mot, error) {
 
 	return resultat, err
 }
-
-func NewMot(word string) Mot {
-	return Mot{Word: word, Length: len(word), FirstLetter: string(word[0])}
-}
