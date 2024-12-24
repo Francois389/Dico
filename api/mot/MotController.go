@@ -1,56 +1,74 @@
 package mot
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"net/http"
-	"unicode/utf8"
+	"strconv"
 )
 
 func SetUpRoutes(c *gin.Engine) {
-	c.GET("/mots/:firstLetter", GetMotsFirsLetter)
-	c.GET("/mot/:firstLetter", GetMotFirsLetter)
+	c.GET("/mots/:firstLetter", getMotsFirstLetter)
+	c.GET("/mot/:firstLetter", getMotFirstLetter)
+	c.GET("/mot/length/:length", getMotLength)
 }
 
-const InvalidFirstLetter = "Invalid first letter. Expected one character."
+const InvalidFirstLetter = "invalid first letter. Expected one character"
 
-
-func GetMotsFirsLetter( c *gin.Context) {
+func getMotsFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	fmt.Println("firstLetter: ", firstLetter)
-	fmt.Printf("firstLetter: %d\n", utf8.RuneCountInString(firstLetter))
+	mots, err := GetMotsFirstLetter(firstLetter)
 
-	if utf8.RuneCountInString(firstLetter) != 1 {
-		fmt.Println("Invalid first letter")
+	if err != nil {
 		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
-	} else {
-
-		mots, err := GetMotsFirstLetter(firstLetter)
-
-		if err != nil {
-			c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
-			return
-		}
-
-		c.JSON(http.StatusOK, mots)
+		return
 	}
+
+	if len(mots) == 0 {
+		c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
+		return
+	}
+
+	c.JSON(http.StatusOK, mots)
+
 }
 
-func GetMotFirsLetter( c *gin.Context) {
+func getMotFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	if utf8.RuneCountInString(firstLetter) != 1 {
-		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
-	} else {
-		mot, err := GetMotFirstLetter(firstLetter)
-		if err != nil {
-			c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
-			return
-		}
+	mot, err := GetMotFirstLetter(firstLetter)
 
-		c.JSON(http.StatusOK, mot)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
+		} else {
+			c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
+		}
+		return
 	}
+
+	c.JSON(http.StatusOK, mot)
+}
+
+func getMotLength(c *gin.Context) {
+	length, err := strconv.Atoi(c.Param("length"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, getErrorInvalidLength())
+		return
+	}
+
+	mot, err := GetMotLength(length)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, getErrorNoWordWithLength(length))
+		return
+	}
+
+	c.JSON(http.StatusOK, mot)
 }
 
 func getErrorNoWordStartWith(firstLetter string) gin.H {
@@ -59,4 +77,12 @@ func getErrorNoWordStartWith(firstLetter string) gin.H {
 
 func getErrorInvalidFirstLetter() gin.H {
 	return gin.H{"error": InvalidFirstLetter}
+}
+
+func getErrorNoWordWithLength(length int) gin.H {
+	return gin.H{"error": fmt.Sprintf("No words with length (%d)", length)}
+}
+
+func getErrorInvalidLength() gin.H {
+	return gin.H{"error": "Please give a number"}
 }

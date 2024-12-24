@@ -9,13 +9,24 @@ import (
 
 func main() {
 	fmt.Println("Sarting...")
-	db.Init("mongodb://localhost:27027", "dico-db", "mots")
+
+	url := "mongodb://localhost:27027"
+	databaseName := "dico-db"
+	collectionName := "mots"
+
+	err := db.Init(url, databaseName, collectionName)
+	if err != nil {
+		fmt.Println("Error while connecting to the database")
+		fmt.Println(err)
+		return
+	}
 
 	r := gin.Default()
 
 	mot.SetUpRoutes(r)
+	var port = ":4242"
 
-	err := r.Run()
+	err = r.Run(port)
 	if err != nil {
 		fmt.Println("Error while starting the server")
 		panic(err)
