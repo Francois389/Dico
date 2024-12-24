@@ -10,14 +10,14 @@ import (
 )
 
 func SetUpRoutes(c *gin.Engine) {
-	c.GET("/mots/:firstLetter", GetMotsFirsLetter)
-	c.GET("/mot/:firstLetter", GetMotFirsLetter)
+	c.GET("/mots/:firstLetter", getMotsFirstLetter)
+	c.GET("/mot/:firstLetter", getMotFirstLetter)
 	c.GET("/mot/length/:length", getMotLength)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
 
-func GetMotsFirsLetter(c *gin.Context) {
+func getMotsFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
 	mots, err := GetMotsFirstLetter(firstLetter)
@@ -36,7 +36,7 @@ func GetMotsFirsLetter(c *gin.Context) {
 
 }
 
-func GetMotFirsLetter(c *gin.Context) {
+func getMotFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
 	mot, err := GetMotFirstLetter(firstLetter)
