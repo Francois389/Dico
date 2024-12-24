@@ -14,8 +14,9 @@ func main() {
 	r := gin.Default()
 
 	mot.SetUpRoutes(r)
+	var port = ":4242"
 
-	err := r.Run()
+	err = r.Run(port)
 	if err != nil {
 		fmt.Println("Error while starting the server")
 		panic(err)
