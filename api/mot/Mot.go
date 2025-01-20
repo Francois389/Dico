@@ -6,9 +6,9 @@ import (
 )
 
 type Mot struct {
-	Word string `json:"word" bson:"word"`
-	Length int `json:"length" bson:"length"`
-	FirstLetter string `json:"first_letter" bson:"first_letter"`
+	Word         string `json:"word" bson:"word"`
+	Length       int    `json:"length" bson:"length"`
+	FirstLetter  string `json:"first_letter" bson:"first_letter"`
 	SortedLetter string `json:"sorted_letter" bson:"sorted_letter"`
 }
 

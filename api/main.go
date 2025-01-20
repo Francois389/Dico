@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Sarting...")
+	fmt.Println("Starting...")
 
 	url := "mongodb://localhost:27027"
 	databaseName := "dico-db"

@@ -34,7 +34,6 @@ func GetMotsFirstLetter(firstLetter string) ([]Mot, error) {
 	return mots, nil
 }
 
-
 func GetMotFirstLetter(firstLetter string) (*Mot, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
@@ -93,4 +92,35 @@ func GetMotLength(length int) (*Mot, error) {
 	}
 
 	return &mots[0], nil
+}
+
+/*
+GetAnagrams retrieves a list of anagrams for the given word.
+It returns a pointer to a slice of Mot and an error if any occurs.
+If no anagrams are found, it returns mongo.ErrNoDocuments.
+*/
+func GetAnagrams(mot string) ([]Mot, error) {
+	collection := db.GetCollection()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Find the anagrams list related to the given word (except the one given)
+	cursor, err := collection.Find(ctx, bson.D{{"sorted_letter", sortLetter(mot)}, {"word", bson.D{{"$ne", mot}}}})
+	if err != nil {
+		return nil, err
+	}
+
+	// Retrieve anagrams list
+	var mots []Mot
+	if err = cursor.All(context.TODO(), &mots); err != nil {
+		return nil, err
+	}
+
+	// Si aucun mot n'a été trouvé, renvoyer une erreur
+	if len(mots) == 0 {
+		return nil, mongo.ErrNoDocuments
+	}
+
+	return mots, nil
 }
