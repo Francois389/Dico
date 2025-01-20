@@ -5,7 +5,9 @@ import (
 	"Dico/mot"
 	"bufio"
 	"context"
+	"flag"
 	"fmt"
+	"go.mongodb.org/mongo-driver/v2/bson"
 	"log"
 	"os"
 	"strings"
@@ -14,14 +16,25 @@ import (
 )
 
 func main() {
+	// Define a flag to clear existing data
+	clearExisting := flag.Bool("clear", false, "Clear existing data before populating the database")
+	flag.Parse()
+
 	// Contexte avec timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 	defer cancel()
 	// Ouverture de la connexion à la base de données
 	db.Init("mongodb://localhost:27027", "dico-db", "mots")
 	collection := db.GetCollection()  // Adaptez selon votre méthode de connexion
-
 	defer db.Close()
+
+	// Delete existing data if flag is set
+	if *clearExisting {
+		if _, err := collection.DeleteMany(ctx, bson.D{}); err != nil {
+			log.Fatalf("Error when delete existing data: %v", err)
+		}
+		fmt.Println("Existing data has been deleted")
+	}
 
 	// Ouvrir le fichier contenant les mots
 	file, err := os.Open("mots.txt")
