@@ -13,6 +13,7 @@ func SetUpRoutes(c *gin.Engine) {
 	c.GET("/mots/:firstLetter", getMotsFirstLetter)
 	c.GET("/mot/:firstLetter", getMotFirstLetter)
 	c.GET("/mot/length/:length", getMotLength)
+	c.GET("/anagrams/:word", getAnagrams)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
@@ -71,6 +72,23 @@ func getMotLength(c *gin.Context) {
 	c.JSON(http.StatusOK, mot)
 }
 
+func getAnagrams(c *gin.Context) {
+	word := c.Param("word")
+
+	mots, err := GetAnagrams(word)
+
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			c.JSON(http.StatusNotFound, getErrorNoAnagramFound(word))
+		} else {
+			c.JSON(http.StatusBadRequest, getErrorNoWordLike(word))
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, mots)
+}
+
 func getErrorNoWordStartWith(firstLetter string) gin.H {
 	return gin.H{"error": fmt.Sprintf("No words start with a (%s)", firstLetter)}
 }
@@ -85,4 +103,12 @@ func getErrorNoWordWithLength(length int) gin.H {
 
 func getErrorInvalidLength() gin.H {
 	return gin.H{"error": "Please give a number"}
+}
+
+func getErrorNoAnagramFound(word string) gin.H {
+	return gin.H{"error": fmt.Sprintf("No anagram found for this word (%s)", word)}
+}
+
+func getErrorNoWordLike(word string) gin.H {
+	return gin.H{"error": fmt.Sprintf("No match found for this word (%s)", word)}
 }
