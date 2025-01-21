@@ -1,4 +1,4 @@
-package mot
+package word
 
 import (
 	"errors"
@@ -10,37 +10,37 @@ import (
 )
 
 func SetUpRoutes(c *gin.Engine) {
-	c.GET("/mots/:firstLetter", getMotsFirstLetter)
-	c.GET("/mot/:firstLetter", getMotFirstLetter)
-	c.GET("/mot/length/:length", getMotLength)
+	c.GET("/mots/:firstLetter", getWordsFirstLetter)
+	c.GET("/mot/:firstLetter", getWordFirstLetter)
+	c.GET("/mot/length/:length", getWordLength)
 	c.GET("/anagrams/:word", getAnagrams)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
 
-func getMotsFirstLetter(c *gin.Context) {
+func getWordsFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	mots, err := GetMotsFirstLetter(firstLetter)
+	words, err := GetWordsFirstLetter(firstLetter)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
 		return
 	}
 
-	if len(mots) == 0 {
+	if len(words) == 0 {
 		c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
 		return
 	}
 
-	c.JSON(http.StatusOK, mots)
+	c.JSON(http.StatusOK, words)
 
 }
 
-func getMotFirstLetter(c *gin.Context) {
+func getWordFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	mot, err := GetMotFirstLetter(firstLetter)
+	word, err := GetWordFirstLetter(firstLetter)
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -51,10 +51,10 @@ func getMotFirstLetter(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, mot)
+	c.JSON(http.StatusOK, word)
 }
 
-func getMotLength(c *gin.Context) {
+func getWordLength(c *gin.Context) {
 	length, err := strconv.Atoi(c.Param("length"))
 
 	if err != nil {
@@ -62,31 +62,31 @@ func getMotLength(c *gin.Context) {
 		return
 	}
 
-	mot, err := GetMotLength(length)
+	word, err := GetWordLength(length)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, getErrorNoWordWithLength(length))
 		return
 	}
 
-	c.JSON(http.StatusOK, mot)
+	c.JSON(http.StatusOK, word)
 }
 
 func getAnagrams(c *gin.Context) {
-	word := c.Param("word")
+	givenWord := c.Param("word")
 
-	mots, err := GetAnagrams(word)
+	words, err := GetAnagrams(givenWord)
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			c.JSON(http.StatusNotFound, getErrorNoAnagramFound(word))
+			c.JSON(http.StatusNotFound, getErrorNoAnagramFound(givenWord))
 		} else {
-			c.JSON(http.StatusBadRequest, getErrorNoWordLike(word))
+			c.JSON(http.StatusBadRequest, getErrorNoWordLike(givenWord))
 		}
 		return
 	}
 
-	c.JSON(http.StatusOK, mots)
+	c.JSON(http.StatusOK, words)
 }
 
 func getErrorNoWordStartWith(firstLetter string) gin.H {
