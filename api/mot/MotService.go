@@ -21,12 +21,12 @@ func GetMotsFirstLetter(firstLetter string) ([]Mot, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Rechercher les mots
+	// Find the words
 	cursor, err := collection.Find(ctx, bson.D{{"first_letter", firstLetter}})
 	if err != nil {
 		return nil, err
 	}
-	// Récupérer les mots, s'il y a une erreur, la renvoyer
+	// Get the words, if there is an error, return it
 	if err = cursor.All(ctx, &mots); err != nil {
 		return nil, err
 	}
@@ -52,13 +52,13 @@ func GetMotFirstLetter(firstLetter string) (*Mot, error) {
 		return nil, err
 	}
 
-	// Récupérer les mots
+	// Retrieve the words
 	var mots []Mot
 	if err = cursor.All(ctx, &mots); err != nil {
 		return nil, err
 	}
 
-	// Vérifier si aucun mot n'a été trouvé
+	// Check if no words were found
 	if len(mots) == 0 {
 		return nil, mongo.ErrNoDocuments
 	}
@@ -75,23 +75,23 @@ func GetMotLength(length int) (*Mot, error) {
 	matchStage := bson.D{{"$match", bson.D{{"length", length}}}}
 	sampleStage := bson.D{{"$sample", bson.D{{"size", 1}}}}
 
-	// Rechercher un mot de la longueur spécifiée
+	// Find a word of the specified length
 	cursor, err := collection.Aggregate(ctx, mongo.Pipeline{matchStage, sampleStage})
 	if err != nil {
 		return nil, err
 	}
-	// Récupérer le mot
-	var mots []Mot
-	if err = cursor.All(context.TODO(), &mots); err != nil {
+	// Retrieve the word
+	var words []Mot
+	if err = cursor.All(context.TODO(), &words); err != nil {
 		return nil, err
 	}
 
-	// Si aucun mot n'a été trouvé, renvoyer une erreur
-	if len(mots) == 0 {
+	// If no words were found, return an error
+	if len(words) == 0 {
 		return nil, mongo.ErrNoDocuments
 	}
 
-	return &mots[0], nil
+	return &words[0], nil
 }
 
 /*
@@ -105,19 +105,19 @@ func GetAnagrams(mot string) ([]Mot, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
-	// Find the anagrams list related to the given word (except the one given)
+	// Find the anagram list related to the given word (except the one given)
 	cursor, err := collection.Find(ctx, bson.D{{"sorted_letter", sortLetter(mot)}, {"word", bson.D{{"$ne", mot}}}})
 	if err != nil {
 		return nil, err
 	}
 
-	// Retrieve anagrams list
+	// Retrieve the anagram list
 	var mots []Mot
 	if err = cursor.All(context.TODO(), &mots); err != nil {
 		return nil, err
 	}
 
-	// Si aucun mot n'a été trouvé, renvoyer une erreur
+	// If no words were found, return an error
 	if len(mots) == 0 {
 		return nil, mongo.ErrNoDocuments
 	}
