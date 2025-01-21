@@ -2,7 +2,7 @@ package main
 
 import (
 	"Dico/db"
-	"Dico/mot"
+	"Dico/word"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -23,7 +23,7 @@ func main() {
 
 	r := gin.Default()
 
-	mot.SetUpRoutes(r)
+	word.SetUpRoutes(r)
 	var port = ":4242"
 
 	err = r.Run(port)

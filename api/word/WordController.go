@@ -1,4 +1,4 @@
-package mot
+package word
 
 import (
 	"errors"

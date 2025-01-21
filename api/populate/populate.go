@@ -2,7 +2,7 @@ package main
 
 import (
 	"Dico/db"
-	"Dico/mot"
+	"Dico/word"
 	"bufio"
 	"context"
 	"flag"
@@ -52,7 +52,7 @@ func main() {
 		motTexte := cleanWord(scanner.Text())
 
 		if isValidWord(motTexte) {
-			wordsBatch = append(wordsBatch, mot.NewMot(motTexte))
+			wordsBatch = append(wordsBatch, word.NewMot(motTexte))
 
 			if len(wordsBatch) >= batchSize {
 				if !addWordsToCollection(collection, ctx, wordsBatch) {

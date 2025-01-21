@@ -1,4 +1,4 @@
-package mot
+package word
 
 import (
 	"Dico/db"
@@ -10,12 +10,12 @@ import (
 	"unicode/utf8"
 )
 
-func GetMotsFirstLetter(firstLetter string) ([]Mot, error) {
+func GetMotsFirstLetter(firstLetter string) ([]Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
 
-	var mots []Mot
+	var mots []Word
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -34,7 +34,7 @@ func GetMotsFirstLetter(firstLetter string) ([]Mot, error) {
 	return mots, nil
 }
 
-func GetMotFirstLetter(firstLetter string) (*Mot, error) {
+func GetMotFirstLetter(firstLetter string) (*Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
@@ -53,7 +53,7 @@ func GetMotFirstLetter(firstLetter string) (*Mot, error) {
 	}
 
 	// Retrieve the words
-	var mots []Mot
+	var mots []Word
 	if err = cursor.All(ctx, &mots); err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func GetMotFirstLetter(firstLetter string) (*Mot, error) {
 	return &mots[0], nil
 }
 
-func GetMotLength(length int) (*Mot, error) {
+func GetMotLength(length int) (*Word, error) {
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -81,7 +81,7 @@ func GetMotLength(length int) (*Mot, error) {
 		return nil, err
 	}
 	// Retrieve the word
-	var words []Mot
+	var words []Word
 	if err = cursor.All(context.TODO(), &words); err != nil {
 		return nil, err
 	}
@@ -96,10 +96,10 @@ func GetMotLength(length int) (*Mot, error) {
 
 /*
 GetAnagrams retrieves a list of anagrams for the given word.
-It returns a pointer to a slice of Mot and an error if any occurs.
+It returns a pointer to a slice of Word and an error if any occurs.
 If no anagrams are found, it returns mongo.ErrNoDocuments.
 */
-func GetAnagrams(mot string) ([]Mot, error) {
+func GetAnagrams(mot string) ([]Word, error) {
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -112,7 +112,7 @@ func GetAnagrams(mot string) ([]Mot, error) {
 	}
 
 	// Retrieve the anagram list
-	var mots []Mot
+	var mots []Word
 	if err = cursor.All(context.TODO(), &mots); err != nil {
 		return nil, err
 	}
