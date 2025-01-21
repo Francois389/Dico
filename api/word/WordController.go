@@ -10,18 +10,18 @@ import (
 )
 
 func SetUpRoutes(c *gin.Engine) {
-	c.GET("/mots/:firstLetter", getMotsFirstLetter)
-	c.GET("/mot/:firstLetter", getMotFirstLetter)
-	c.GET("/mot/length/:length", getMotLength)
+	c.GET("/mots/:firstLetter", getWordsFirstLetter)
+	c.GET("/mot/:firstLetter", getWordFirstLetter)
+	c.GET("/mot/length/:length", getWordLength)
 	c.GET("/anagrams/:word", getAnagrams)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
 
-func getMotsFirstLetter(c *gin.Context) {
+func getWordsFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	words, err := GetMotsFirstLetter(firstLetter)
+	words, err := GetWordsFirstLetter(firstLetter)
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
@@ -37,10 +37,10 @@ func getMotsFirstLetter(c *gin.Context) {
 
 }
 
-func getMotFirstLetter(c *gin.Context) {
+func getWordFirstLetter(c *gin.Context) {
 	firstLetter := c.Param("firstLetter")
 
-	word, err := GetMotFirstLetter(firstLetter)
+	word, err := GetWordFirstLetter(firstLetter)
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
@@ -54,7 +54,7 @@ func getMotFirstLetter(c *gin.Context) {
 	c.JSON(http.StatusOK, word)
 }
 
-func getMotLength(c *gin.Context) {
+func getWordLength(c *gin.Context) {
 	length, err := strconv.Atoi(c.Param("length"))
 
 	if err != nil {
@@ -62,7 +62,7 @@ func getMotLength(c *gin.Context) {
 		return
 	}
 
-	word, err := GetMotLength(length)
+	word, err := GetWordLength(length)
 
 	if err != nil {
 		c.JSON(http.StatusNotFound, getErrorNoWordWithLength(length))

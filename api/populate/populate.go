@@ -52,7 +52,7 @@ func main() {
 		motTexte := cleanWord(scanner.Text())
 
 		if isValidWord(motTexte) {
-			wordsBatch = append(wordsBatch, word.NewMot(motTexte))
+			wordsBatch = append(wordsBatch, word.NewWord(motTexte))
 
 			if len(wordsBatch) >= batchSize {
 				if !addWordsToCollection(collection, ctx, wordsBatch) {

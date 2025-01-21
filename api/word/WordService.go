@@ -10,7 +10,7 @@ import (
 	"unicode/utf8"
 )
 
-func GetMotsFirstLetter(firstLetter string) ([]Word, error) {
+func GetWordsFirstLetter(firstLetter string) ([]Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
@@ -34,7 +34,7 @@ func GetMotsFirstLetter(firstLetter string) ([]Word, error) {
 	return mots, nil
 }
 
-func GetMotFirstLetter(firstLetter string) (*Word, error) {
+func GetWordFirstLetter(firstLetter string) (*Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
@@ -66,7 +66,7 @@ func GetMotFirstLetter(firstLetter string) (*Word, error) {
 	return &mots[0], nil
 }
 
-func GetMotLength(length int) (*Word, error) {
+func GetWordLength(length int) (*Word, error) {
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)

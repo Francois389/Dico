@@ -11,7 +11,7 @@ type Word struct {
 	SortedLetter string `json:"sorted_letter" bson:"sorted_letter"`
 }
 
-func NewMot(word string) Word {
+func NewWord(word string) Word {
 	return Word{Word: word, Length: len(word), FirstLetter: string(word[0]), SortedLetter: sortLetter(word)}
 }
 
