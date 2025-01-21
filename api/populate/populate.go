@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 	"log"
 	"os"
 	"strings"
@@ -20,12 +21,11 @@ func main() {
 	clearExisting := flag.Bool("clear", false, "Clear existing data before populating the database")
 	flag.Parse()
 
-	// Contexte avec timeout
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 	defer cancel()
-	// Ouverture de la connexion à la base de données
+
 	db.Init("mongodb://localhost:27027", "dico-db", "mots")
-	collection := db.GetCollection()  // Adaptez selon votre méthode de connexion
+	collection := db.GetCollection()
 	defer db.Close()
 
 	// Delete existing data if flag is set
@@ -36,65 +36,62 @@ func main() {
 		fmt.Println("Existing data has been deleted")
 	}
 
-	// Ouvrir le fichier contenant les mots
 	file, err := os.Open("mots.txt")
 	if err != nil {
-		log.Fatalf("Impossible d'ouvrir le fichier : %v", err)
+		log.Fatalf("Th file can't be opened: %v", err)
 	}
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
 
-	compteur := 0
+	count := 0
 	batchSize := 1000
 	var wordsBatch []interface{}
 
-	// Parcourir le fichier ligne par ligne
 	for scanner.Scan() {
 		motTexte := cleanWord(scanner.Text())
 
 		if isValidWord(motTexte) {
-			// Créer un nouveau mot
-			nouveauMot := mot.NewMot(motTexte)  // Adaptez selon votre méthode de création
-
-			// Ajouter le mot au lot
-			wordsBatch = append(wordsBatch, nouveauMot)
+			wordsBatch = append(wordsBatch, mot.NewMot(motTexte))
 
 			if len(wordsBatch) >= batchSize {
-				_, err := collection.InsertMany(ctx, wordsBatch)
-				if err != nil {
-					fmt.Sprintf("erreur lors de l'insertion du batch : %v", err)
+				if !addWordsToCollection(collection, ctx, wordsBatch) {
 					return
 				}
 
-				compteur += len(wordsBatch)
-				fmt.Printf("Processed %d words\n", compteur)
+				count += len(wordsBatch)
+				fmt.Printf("Processed %d words\n", count)
 
-				// Réinitialiser le batch
 				wordsBatch = nil
 			}
 		}
 	}
-	// Insérer les mots restants
+
+	// Insert the remaining words
 	if len(wordsBatch) > 0 {
-		_, err := collection.InsertMany(ctx, wordsBatch)
-		if err != nil {
-			fmt.Sprintf("erreur lors de l'insertion du batch : %v", err)
+		if !addWordsToCollection(collection, ctx, wordsBatch) {
 			return
 		}
 
-		compteur += len(wordsBatch)
-		fmt.Printf("Processed %d words\n", compteur)
+		count += len(wordsBatch)
+		fmt.Printf("Processed %d words\n", count)
 	}
 
 	if err := scanner.Err(); err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%d mots ont été ajoutés à la base de données.\n", compteur)
+	fmt.Printf("%d words have been added to the database.\n", count)
 }
 
-// Fonctions de nettoyage et validation
+func addWordsToCollection(collection *mongo.Collection, ctx context.Context, wordsBatch []interface{}) bool {
+	_, err := collection.InsertMany(ctx, wordsBatch)
+	if err != nil {
+		fmt.Printf("Error when adding words : %v", err)
+		return false
+	}
+	return true
+}
 
 func cleanWord(word string) string {
 	word = strings.ToLower(word)
@@ -104,7 +101,7 @@ func cleanWord(word string) string {
 func isValidWord(word string) bool {
 	for _, r := range word {
 		if !unicode.IsLetter(r) {
-			fmt.Printf("Le mot %s n'est pas valide\n", word)
+			fmt.Printf("The word %s isn't valid\n", word)
 			return false
 		}
 	}
