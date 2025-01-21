@@ -1,7 +1,6 @@
 package mot
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -23,6 +22,5 @@ func sortLetter(word string) string {
 		return lettres[i] < lettres[j]
 	})
 
-	fmt.Printf("Characters: %q\n", lettres)
 	return string(lettres)
 }
