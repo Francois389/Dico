@@ -2,7 +2,7 @@ package word
 
 import "testing"
 
-func Test_sort(t *testing.T) {
+func TestSort(t *testing.T) {
 	type args struct {
 		mot string
 	}
