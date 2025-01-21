@@ -10,7 +10,6 @@ import (
 )
 
 type Singleton struct {
-	// Add fields here
 	collection *mongo.Collection
 	client     *mongo.Client
 }
@@ -25,7 +24,7 @@ func GetInstance() *Singleton {
 	return instance
 }
 
-func (s *Singleton) SetCollection(collection *mongo.Collection) {
+func (s *Singleton) setCollection(collection *mongo.Collection) {
 	s.collection = collection
 }
 
@@ -34,21 +33,21 @@ func (s *Singleton) getCollection() *mongo.Collection {
 }
 
 func getClient(ctx context.Context, url string) (*mongo.Client, error) {
-	// Configurer un timeout de connexion
+	// Configure a connection timeout
 	clientOptions := options.Client().ApplyURI(url).SetConnectTimeout(10 * time.Second)
 
 	client, err := mongo.Connect(clientOptions)
 	if err != nil {
-		return nil, fmt.Errorf("erreur de connexion à la base de données : %v", err)
+		return nil, fmt.Errorf("database connection error: %v", err)
 	}
 
-	// Vérifier que la connexion est établie
+	// Check that the connection is established
 	err = client.Ping(ctx, nil)
 	if err != nil {
-		return nil, fmt.Errorf("impossible de ping la base de données : %v", err)
+		return nil, fmt.Errorf("unable to ping the database: %v", err)
 	}
 
-	fmt.Println("Connecté à la base de données")
+	fmt.Println("Connected to database")
 	return client, nil
 }
 
@@ -72,13 +71,13 @@ func Init(url, databaseName, collectionName string) error {
 
 	client, err := getClient(ctx, url)
 	if err != nil {
-		return fmt.Errorf("erreur lors de l'initialisation du client : %v", err)
+		return fmt.Errorf("error during client initialization: %v", err)
 	}
 
 	instance.client = client
 	database := getDatabase(client, databaseName)
 
-	instance.SetCollection(getCollection(database, collectionName))
+	instance.setCollection(getCollection(database, collectionName))
 	return nil
 }
 
@@ -92,7 +91,7 @@ func Close() error {
 
 	err := instance.client.Disconnect(ctx)
 	if err != nil {
-		return fmt.Errorf("erreur lors de la déconnexion : %v", err)
+		return fmt.Errorf("error when disconnecting: %v", err)
 	}
 	return nil
 }
