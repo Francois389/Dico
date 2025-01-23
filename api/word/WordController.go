@@ -10,9 +10,9 @@ import (
 )
 
 func SetUpRoutes(c *gin.Engine) {
-	c.GET("/mots/:firstLetter", getWordsFirstLetter)
-	c.GET("/mot/:firstLetter", getWordFirstLetter)
-	c.GET("/mot/length/:length", getWordLength)
+	c.GET("/words/:firstLetter", getWordsFirstLetter)
+	c.GET("/word/:firstLetter", getWordFirstLetter)
+	c.GET("/word/length/:length", getWordLength)
 	c.GET("/anagrams/:word", getAnagrams)
 }
 
