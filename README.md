@@ -42,7 +42,7 @@ Tous les résultats de mots sont renvoyé sous cette forme :
 }
 ```
 
-### 1. `mots/{lettre}`
+### 1. `words/{lettre}`
 
 Renvoie tous les mots qui commencent par la lettre fournie
 
@@ -59,7 +59,7 @@ Renvoie tous les mots qui commencent par la lettre fournie
 }
 ```
 
-Exemple : `mots/abc` renverra cette erreur.
+Exemple : `words/abc` renverra cette erreur.
 
 - Si aucun mot ne commence par la lettre fournie, une erreur sera renvoyé :
 
@@ -71,11 +71,11 @@ Exemple : `mots/abc` renverra cette erreur.
 }
 ```
 
-Exemple : `mots/╚` renverra cette erreur.
+Exemple : `words/╚` renverra cette erreur.
 
 </details>
 
-### 2. `mot/{lettre}`
+### 2. `word/{lettre}`
 
 Renvoie un mot choisi aléatoirement qui commence par la lettre fournie.
 
@@ -92,7 +92,7 @@ Renvoie un mot choisi aléatoirement qui commence par la lettre fournie.
 }
 ```
 
-Exemple : `mot/abc` renverra cette erreur.
+Exemple : `word/abc` renverra cette erreur.
 
 - Si aucun mot ne commence par la lettre fournie, une erreur sera renvoyé :
 
@@ -104,11 +104,11 @@ Exemple : `mot/abc` renverra cette erreur.
 }
 ```
 
-Exemple : `mot/╚` renverra cette erreur.
+Exemple : `word/╚` renverra cette erreur.
 
 </details>
 
-### 3. `mot/length/{length}`
+### 3. `word/length/{length}`
 
 Renvoie un mot choisi aléatoirement qui a la longueur demandé
 
@@ -125,7 +125,7 @@ Renvoie un mot choisi aléatoirement qui a la longueur demandé
 }
 ```
 
-Exemple : `mot/length/a` renverra cette erreur.
+Exemple : `word/length/a` renverra cette erreur.
 
 - Si aucun mot avec la longueur fournie n'est trouvé, une erreur sera renvoyé :
 
@@ -137,7 +137,7 @@ Exemple : `mot/length/a` renverra cette erreur.
 }
 ```
 
-Exemple : `mot/length/111` renverra cette erreur.
+Exemple : `word/length/111` renverra cette erreur.
 
 </details>
 
