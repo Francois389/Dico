@@ -2,7 +2,7 @@
 
 Je n'ai pas trouvé d'API permettant de demander un mot de la langue française en ligne.
 
-Donc j'ai décidé de la faire moi même.
+Donc j'ai décidé de la faire moi-même.
 
 La liste de mot que j'utilise a été téléchargé sur le site de [3Z Software](http://www.3zsoftware.com/fr/listes.php), il s'agit de la liste *Petit Larousse Illustré 2007* que l'on peut télécharger [ici](http://www.3zsoftware.com/listes/pli07.zip).
 
@@ -18,12 +18,12 @@ Cloner le projet en local
 docker compose up -d
 ```
 
-Dés que le conteneur est lancé, il faut remplir la base de donnée avec des mots.
+Dès que le conteneur est lancé, il faut remplir la base de donnée avec des mots.
 
-Vouys avez duex options :
+Vouys avez deux options :
 
 1. Le faire à la main ( la base de donnée est accesible en `localhost` sur le port `27027` )
-2. Utiliser le fichier [`populate.go`](https://github.com/Francois389/Dico/blob/main/api/populate/populate.go), vous pouvez suivre les instructions du README qui ce trouve dans le même dossier.
+2. Utiliser le fichier [`populate.go`](https://github.com/Francois389/Dico/blob/main/api/populate/populate.go), vous pouvez suivre les instructions du README qui se trouve dans le même dossier.
 
 Une fois que la base de donnée est initialisé, vous pouvez executer le serveur.
 
@@ -110,7 +110,7 @@ Exemple : `word/╚` renverra cette erreur.
 
 ### 3. `word/length/{length}`
 
-Renvoie un mot choisi aléatoirement qui a la longueur demandé
+Renvoie un mot choisi aléatoirement qui a la longueur demandée
 
 <details>
   <summary>Erreur possible</summary>
