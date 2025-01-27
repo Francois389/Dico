@@ -124,3 +124,18 @@ func GetAnagrams(mot string) ([]Word, error) {
 
 	return mots, nil
 }
+
+// GetWordsBatch
+// for each letter in letters, get a random word starting with that letter
+func GetWordsBatch(letters string) []Word {
+	// Find a random word starting with each letter in the given string
+	var words []Word
+	for _, letter := range letters {
+		word, _ := GetWordFirstLetter(string(letter))
+		if word != nil {
+			words = append(words, *word)
+		}
+	}
+
+	return words
+}

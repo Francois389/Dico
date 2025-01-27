@@ -14,6 +14,7 @@ func SetUpRoutes(c *gin.Engine) {
 	c.GET("/word/:firstLetter", getWordFirstLetter)
 	c.GET("/word/length/:length", getWordLength)
 	c.GET("/anagrams/:word", getAnagrams)
+	c.GET("/words-batch/:letters", getWordsBatch)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
@@ -24,12 +25,12 @@ func getWordsFirstLetter(c *gin.Context) {
 	words, err := GetWordsFirstLetter(firstLetter)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
+		c.JSON(http.StatusBadRequest, invalidFirstLetter())
 		return
 	}
 
 	if len(words) == 0 {
-		c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
+		c.JSON(http.StatusNotFound, noWordStartWith(firstLetter))
 		return
 	}
 
@@ -44,9 +45,9 @@ func getWordFirstLetter(c *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			c.JSON(http.StatusNotFound, getErrorNoWordStartWith(firstLetter))
+			c.JSON(http.StatusNotFound, noWordStartWith(firstLetter))
 		} else {
-			c.JSON(http.StatusBadRequest, getErrorInvalidFirstLetter())
+			c.JSON(http.StatusBadRequest, invalidFirstLetter())
 		}
 		return
 	}
@@ -58,14 +59,14 @@ func getWordLength(c *gin.Context) {
 	length, err := strconv.Atoi(c.Param("length"))
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, getErrorInvalidLength())
+		c.JSON(http.StatusBadRequest, invalidLength())
 		return
 	}
 
 	word, err := GetWordLength(length)
 
 	if err != nil {
-		c.JSON(http.StatusNotFound, getErrorNoWordWithLength(length))
+		c.JSON(http.StatusNotFound, noWordWithLength(length))
 		return
 	}
 
@@ -79,9 +80,9 @@ func getAnagrams(c *gin.Context) {
 
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			c.JSON(http.StatusNotFound, getErrorNoAnagramFound(givenWord))
+			c.JSON(http.StatusNotFound, noAnagramFound(givenWord))
 		} else {
-			c.JSON(http.StatusBadRequest, getErrorNoWordLike(givenWord))
+			c.JSON(http.StatusBadRequest, noWordLike(givenWord))
 		}
 		return
 	}
@@ -89,26 +90,44 @@ func getAnagrams(c *gin.Context) {
 	c.JSON(http.StatusOK, words)
 }
 
-func getErrorNoWordStartWith(firstLetter string) gin.H {
+func getWordsBatch(c *gin.Context) {
+	letters := c.Param("letters")
+
+	words := GetWordsBatch(letters)
+
+	if len(words) == 0 {
+		c.JSON(http.StatusNotFound, noWordsStartWithGivenLetter(letters))
+		return
+	}
+
+	c.JSON(http.StatusOK, words)
+}
+
+func noWordStartWith(firstLetter string) gin.H {
 	return gin.H{"error": fmt.Sprintf("No words start with a (%s)", firstLetter)}
 }
 
-func getErrorInvalidFirstLetter() gin.H {
+func invalidFirstLetter() gin.H {
 	return gin.H{"error": InvalidFirstLetter}
 }
 
-func getErrorNoWordWithLength(length int) gin.H {
+func noWordWithLength(length int) gin.H {
 	return gin.H{"error": fmt.Sprintf("No words with length (%d)", length)}
 }
 
-func getErrorInvalidLength() gin.H {
+func invalidLength() gin.H {
 	return gin.H{"error": "Please give a number"}
 }
 
-func getErrorNoAnagramFound(word string) gin.H {
+func noAnagramFound(word string) gin.H {
 	return gin.H{"error": fmt.Sprintf("No anagram found for this word (%s)", word)}
 }
 
-func getErrorNoWordLike(word string) gin.H {
+func noWordLike(word string) gin.H {
 	return gin.H{"error": fmt.Sprintf("No match found for this word (%s)", word)}
+}
+
+func noWordsStartWithGivenLetter(letters string) gin.H {
+	return gin.H{"error": fmt.Sprintf("No words start with given letters (%s)", letters)}
+
 }

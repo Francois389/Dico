@@ -170,6 +170,26 @@ Exemple : `anagrams/aaaaaaaa` renverra cette erreur.
 
 </details>
 
+### 5. `words-batch/{lettres}`
+
+Renvoie pour chaque lettre fournie, un mot qui commence par cette lettre
+
+<details>
+  <summary>Erreur possible</summary>
+
+- Si aucune des lettres ne permet de trouver un mot, une erreur sera renvoyé :
+
+`404 Not Found`
+
+```json
+{
+  "error": "No words start with given letters (é&)"
+}
+```
+
+Exemple : `words-batch/&é` renverra cette erreur.
+</details>
+
 <hr>
 
 ## English
@@ -337,4 +357,24 @@ Returns all anagrams of the word provided
 
 Example: `anagrams/aaaaaaaa` will return this error.
 
+</details>
+
+### 5. `words-batch/{letters}`
+
+Returns for each letter provided, a word that begins with that letter
+
+<details>
+  <summary>Possible error</summary>
+
+- If none of the letters allow finding a word, an error will be returned:
+
+`404 Not Found`
+
+```json
+{
+  "error": "No words start with given letters (é&)"
+}
+```
+
+Example: `words-batch/&é` will return this error.
 </details>
