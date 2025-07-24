@@ -5,13 +5,20 @@ import (
 	"Dico/word"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"os"
 )
 
 func main() {
 	fmt.Println("Starting...")
 
-	url := "mongodb://localhost:27027"
-	databaseName := "dico-db"
+	url := os.Getenv("MONGO_URI")
+	if url == "" {
+		url = "mongodb://localhost:27017/dico-db"
+	}
+	databaseName := os.Getenv("MONGO_DB")
+	if databaseName == "" {
+		databaseName = "dico-db"
+	}
 	collectionName := "mots"
 
 	err := db.Init(url, databaseName, collectionName)

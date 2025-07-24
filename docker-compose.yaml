@@ -1,4 +1,3 @@
-version: '3.8'
 services:
     dico-db:
         image: mongo:6.0
@@ -7,3 +6,15 @@ services:
             - MONGO_INITDB_DATABASE=dico-db
         ports:
             - "27027:27017"
+    dico:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: dico
+        ports:
+            - "4242:4242"
+        depends_on:
+            - dico-db
+        environment:
+            - MONGO_URI=mongodb://dico-db:27017/dico-db
+            - MONGO_DB=dico-db
