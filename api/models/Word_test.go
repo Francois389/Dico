@@ -1,4 +1,4 @@
-package word
+package models
 
 import "testing"
 
@@ -24,7 +24,7 @@ func TestSort(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := sortLetter(tt.args.mot); got != tt.want {
+			if got := SortLetter(tt.args.mot); got != tt.want {
 				t.Errorf("sortLetter() = %v, want %v", got, tt.want)
 			}
 		})

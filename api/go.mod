@@ -1,4 +1,4 @@
-module Dico
+module api
 
 go 1.23
 

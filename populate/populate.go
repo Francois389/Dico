@@ -1,19 +1,20 @@
 package main
 
 import (
-	"Dico/db"
-	"Dico/word"
+	"api/db"
+	word "api/models"
 	"bufio"
 	"context"
 	"flag"
 	"fmt"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 	"log"
 	"os"
 	"strings"
 	"time"
 	"unicode"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func main() {

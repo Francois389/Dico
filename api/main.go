@@ -1,11 +1,12 @@
 package main
 
 import (
-	"Dico/db"
-	"Dico/word"
+	"api/db"
+	"api/word"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
