@@ -10,9 +10,6 @@ COPY api ./
 # Install dependencies
 RUN go get .
 
-# Copy the entire source code into the container
-COPY . .
-
 # Build the application
 RUN go build -o dico
 

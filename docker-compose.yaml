@@ -18,3 +18,13 @@ services:
         environment:
             - MONGO_URI=mongodb://dico-db:27017/dico-db
             - MONGO_DB=dico-db
+    populate:
+        build:
+            context: .
+            dockerfile: Dockerfile.populate
+        depends_on:
+            - dico-db
+        environment:
+            - MONGO_URI=mongodb://dico-db:27017/dico-db
+            - MONGO_DB=dico-db
+        restart: "no"

@@ -25,7 +25,22 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 	defer cancel()
 
-	db.Init("mongodb://localhost:27027", "dico-db", "mots")
+	url := os.Getenv("MONGO_URI")
+	if url == "" {
+		url = "mongodb://localhost:27017/dico-db"
+	}
+	databaseName := os.Getenv("MONGO_DB")
+	if databaseName == "" {
+		databaseName = "dico-db"
+	}
+	collectionName := "mots"
+
+	err := db.Init(url, databaseName, collectionName)
+	if err != nil {
+		fmt.Println("Error while connecting to the database")
+		fmt.Println(err)
+		return
+	}
 	collection := db.GetCollection()
 	defer db.Close()
 
