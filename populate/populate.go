@@ -37,8 +37,7 @@ func main() {
 
 	err := db.Init(url, databaseName, collectionName)
 	if err != nil {
-		fmt.Println("Error while connecting to the database")
-		fmt.Println(err)
+		fmt.Printf("Failed to connect to MongoDB database.\nConnection URL: %s\nDatabase Name: %s\nError: %v\n", url, databaseName, err)
 		return
 	}
 	collection := db.GetCollection()

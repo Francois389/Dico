@@ -5,11 +5,28 @@
 
 ## Français
 
-Pour ajouter des mots à la base de données, copiez un fichier nommé `mots.txt` qui contient sur chaque ligne un mot à ajouter. 
+Ce module contient le code pour initialiser la base de données avec des mots.
+Il est utiliser par le docker compose dans le dossier parent.
 
-Ensuite, exécutez la commande suivante :
+Avant de l'utiliser, assurez-vous d'avoir que ce dossier contient un fichier `mots.txt` avec les mots à ajouter.
 
-```bash 
+Ensuite, soit vous utilisez le fichier `docker-compose.yaml` dans le dossier parent, soit vous pouvez exécuter le fichier `populate.go` directement.
+
+### Docker compose
+
+Pour initialiser la base de données avec Docker, exécutez la commande suivante dans le dossier parent :
+
+```bash
+docker compose up dico-db populate
+```
+
+Le conteneur va s'éteindre une fois que les mots seront ajoutés à la base de données.
+
+### Executer le fichier directement
+
+Exécutez la commande suivante :
+
+```bash
 go run populate.go
 ```
 
@@ -23,18 +40,34 @@ En cas d'erreur, assurez-vous que le serveur mongodb est en cours d'exécution.
 
 ## English
 
-To add some words to the database, copy a file named `mots.txt` who contain in each line a word to add.
+This module contains the code to initialize the database with words.
+It is used by the docker compose in the parent folder.
+Before using it, make sure that this folder contains a `mots.txt` file with the words to add.
 
-Then, run the following command:
+Then, either use the `docker-compose.yaml` file in the parent folder, or you can run the `populate.go` file directly.
+
+### Docker compose
+
+To initialize the database with Docker, run the following command in the parent folder:
+
+```bash
+docker compose up dico-db populate
+```
+
+The container will shut down once the words are added to the database.
+
+### Run the file directly
+
+Run the following command:
 
 ```bash
 go run populate.go
 ```
 
-or if you want to remove the previous words:
+Or if you want to remove the previous words:
 
 ```bash
 go run populate.go -clear
 ```
 
-If any error, be sure that the mongodb server is running.
+In case of an error, make sure that the mongodb server is running.
