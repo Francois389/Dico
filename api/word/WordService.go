@@ -1,21 +1,23 @@
 package word
 
 import (
-	"Dico/db"
+	"api/db"
+	"api/models"
 	"context"
 	"errors"
-	"go.mongodb.org/mongo-driver/v2/bson"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 	"time"
 	"unicode/utf8"
+
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
-func GetWordsFirstLetter(firstLetter string) ([]Word, error) {
+func GetWordsFirstLetter(firstLetter string) ([]models.Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
 
-	var mots []Word
+	var mots []models.Word
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -34,7 +36,7 @@ func GetWordsFirstLetter(firstLetter string) ([]Word, error) {
 	return mots, nil
 }
 
-func GetWordFirstLetter(firstLetter string) (*Word, error) {
+func GetWordFirstLetter(firstLetter string) (*models.Word, error) {
 	if utf8.RuneCountInString(firstLetter) != 1 {
 		return nil, errors.New(InvalidFirstLetter)
 	}
@@ -52,13 +54,13 @@ func GetWordFirstLetter(firstLetter string) (*Word, error) {
 		return nil, err
 	}
 
-	// Retrieve the words
-	var mots []Word
+	// Retrieve the Words
+	var mots []models.Word
 	if err = cursor.All(ctx, &mots); err != nil {
 		return nil, err
 	}
 
-	// Check if no words were found
+	// Check if no Words were found
 	if len(mots) == 0 {
 		return nil, mongo.ErrNoDocuments
 	}
@@ -66,7 +68,7 @@ func GetWordFirstLetter(firstLetter string) (*Word, error) {
 	return &mots[0], nil
 }
 
-func GetWordLength(length int) (*Word, error) {
+func GetWordLength(length int) (*models.Word, error) {
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -81,7 +83,7 @@ func GetWordLength(length int) (*Word, error) {
 		return nil, err
 	}
 	// Retrieve the word
-	var words []Word
+	var words []models.Word
 	if err = cursor.All(context.TODO(), &words); err != nil {
 		return nil, err
 	}
@@ -99,20 +101,20 @@ GetAnagrams retrieves a list of anagrams for the given word.
 It returns a pointer to a slice of Word and an error if any occurs.
 If no anagrams are found, it returns mongo.ErrNoDocuments.
 */
-func GetAnagrams(mot string) ([]Word, error) {
+func GetAnagrams(mot string) ([]models.Word, error) {
 	collection := db.GetCollection()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
 	// Find the anagram list related to the given word (except the one given)
-	cursor, err := collection.Find(ctx, bson.D{{"sorted_letter", sortLetter(mot)}, {"word", bson.D{{"$ne", mot}}}})
+	cursor, err := collection.Find(ctx, bson.D{{"sorted_letter", models.SortLetter(mot)}, {"word", bson.D{{"$ne", mot}}}})
 	if err != nil {
 		return nil, err
 	}
 
 	// Retrieve the anagram list
-	var mots []Word
+	var mots []models.Word
 	if err = cursor.All(context.TODO(), &mots); err != nil {
 		return nil, err
 	}
@@ -125,11 +127,10 @@ func GetAnagrams(mot string) ([]Word, error) {
 	return mots, nil
 }
 
-// GetWordsBatch
-// for each letter in letters, get a random word starting with that letter
-func GetWordsBatch(letters string) []Word {
+// GetWordsBatch retrieves a batch of words for each letter in the given string.
+func GetWordsBatch(letters string) []models.Word {
 	// Find a random word starting with each letter in the given string
-	var words []Word
+	var words []models.Word
 	for _, letter := range letters {
 		word, _ := GetWordFirstLetter(string(letter))
 		if word != nil {

@@ -1,4 +1,4 @@
-package word
+package models
 
 import (
 	"sort"
@@ -12,10 +12,10 @@ type Word struct {
 }
 
 func NewWord(word string) Word {
-	return Word{Word: word, Length: len(word), FirstLetter: string(word[0]), SortedLetter: sortLetter(word)}
+	return Word{Word: word, Length: len(word), FirstLetter: string(word[0]), SortedLetter: SortLetter(word)}
 }
 
-func sortLetter(word string) string {
+func SortLetter(word string) string {
 	var lettres = []rune(word)
 
 	sort.Slice(lettres, func(i, j int) bool {

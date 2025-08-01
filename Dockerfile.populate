@@ -1,0 +1,14 @@
+FROM golang:1.24-bookworm
+
+WORKDIR /app
+COPY populate ./populate
+COPY api ./api
+
+# Install dependencies
+WORKDIR /app/populate
+RUN go get .
+WORKDIR /app/api
+RUN go get .
+
+WORKDIR /app/populate
+CMD ["go", "run", ".", "-clear"]
