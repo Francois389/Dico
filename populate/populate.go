@@ -18,13 +18,29 @@ import (
 )
 
 func main() {
-	// Define a flag to clear existing data
-	clearExisting := flag.Bool("clear", false, "Clear existing data before populating the database")
-	flag.Parse()
+	clearExisting := parseFlags()
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Minute)
 	defer cancel()
 
+	collection := initDatabase()
+	defer db.Close()
+
+	if clearExisting {
+		clearExistingData(collection, ctx)
+	}
+
+	count := processWordsFromFile(collection, ctx)
+	fmt.Printf("%d words have been added to the database.\n", count)
+}
+
+func parseFlags() bool {
+	clearExisting := flag.Bool("clear", false, "Clear existing data before populating the database")
+	flag.Parse()
+	return *clearExisting
+}
+
+func initDatabase() *mongo.Collection {
 	url := os.Getenv("MONGO_URI")
 	if url == "" {
 		url = "mongodb://localhost:27017/dico-db"
@@ -37,28 +53,27 @@ func main() {
 
 	err := db.Init(url, databaseName, collectionName)
 	if err != nil {
-		fmt.Printf("Failed to connect to MongoDB database.\nConnection URL: %s\nDatabase Name: %s\nError: %v\n", url, databaseName, err)
-		return
-	}
-	collection := db.GetCollection()
-	defer db.Close()
-
-	// Delete existing data if flag is set
-	if *clearExisting {
-		if _, err := collection.DeleteMany(ctx, bson.D{}); err != nil {
-			log.Fatalf("Error when delete existing data: %v", err)
-		}
-		fmt.Println("Existing data has been deleted")
+		log.Fatalf("Failed to connect to MongoDB database.\nConnection URL: %s\nDatabase Name: %s\nError: %v\n", url, databaseName, err)
 	}
 
+	return db.GetCollection()
+}
+
+func clearExistingData(collection *mongo.Collection, ctx context.Context) {
+	if _, err := collection.DeleteMany(ctx, bson.D{}); err != nil {
+		log.Fatalf("Error when delete existing data: %v", err)
+	}
+	fmt.Println("Existing data has been deleted")
+}
+
+func processWordsFromFile(collection *mongo.Collection, ctx context.Context) int {
 	file, err := os.Open("mots.txt")
 	if err != nil {
-		log.Fatalf("Th file can't be opened: %v", err)
+		log.Fatalf("The file can't be opened: %v", err)
 	}
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-
 	count := 0
 	batchSize := 1000
 	var wordsBatch []interface{}
@@ -71,12 +86,11 @@ func main() {
 
 			if len(wordsBatch) >= batchSize {
 				if !addWordsToCollection(collection, ctx, wordsBatch) {
-					return
+					log.Fatal("Failed to add words batch to collection")
 				}
 
 				count += len(wordsBatch)
 				fmt.Printf("Processed %d words\n", count)
-
 				wordsBatch = nil
 			}
 		}
@@ -85,9 +99,8 @@ func main() {
 	// Insert the remaining words
 	if len(wordsBatch) > 0 {
 		if !addWordsToCollection(collection, ctx, wordsBatch) {
-			return
+			log.Fatal("Failed to add remaining words to collection")
 		}
-
 		count += len(wordsBatch)
 		fmt.Printf("Processed %d words\n", count)
 	}
@@ -96,7 +109,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("%d words have been added to the database.\n", count)
+	return count
 }
 
 func addWordsToCollection(collection *mongo.Collection, ctx context.Context, wordsBatch []interface{}) bool {
