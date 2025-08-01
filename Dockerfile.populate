@@ -11,4 +11,4 @@ WORKDIR /app/api
 RUN go get .
 
 WORKDIR /app/populate
-CMD ["go", "run", "."]
+CMD ["go", "run", ".", "-clear"]

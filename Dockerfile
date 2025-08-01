@@ -7,11 +7,10 @@ WORKDIR /build
 # Copy the go.mod and go.sum files to the /build directory
 COPY api ./
 
-# Install dependencies
-RUN go get .
+ENV GIN_MODE=release
 
-# Build the application
-RUN go build -o dico
+RUN go get .\
+    & go build -o dico
 
 # Document the port that may need to be published
 EXPOSE 4242
