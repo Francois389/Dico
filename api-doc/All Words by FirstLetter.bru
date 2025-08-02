@@ -1,0 +1,36 @@
+meta {
+  name: All Words by FirstLetter
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{host}}/words/:firstLetter
+  body: none
+  auth: inherit
+}
+
+params:path {
+  firstLetter: z
+}
+
+tests {
+  test("should return all word that start with 'z'", function() {
+    expect(res.getStatus()).to.equal(200);
+    
+    expect(res.getHeader('content-type')).to.contain('application/json');
+    
+    const responseBody = res.getBody();
+    expect(responseBody).to.be.an('array');
+    
+    for (let i = 0; i < responseBody.length; i++) {
+      var word = responseBody[i]
+       expect(word).to.have.property('first_letter');
+       expect(word.first_letter).to.equal('z');
+   
+       expect(word).to.have.property('word');
+       expect(word.word).to.include('z');
+       expect(word.word).to.match(/^z/); 
+    }
+  });
+}

@@ -1,0 +1,33 @@
+meta {
+  name: 1 Word by FirstLetter
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{host}}/word/:firstLetter
+  body: none
+  auth: inherit
+}
+
+params:path {
+  firstLetter: z
+}
+
+tests {
+  test("should return a word that start with 'z'", function() {
+    expect(res.getStatus()).to.equal(200);
+    
+    expect(res.getHeader('content-type')).to.contain('application/json');
+    
+    const responseBody = res.getBody();
+    expect(responseBody).to.be.an('object');
+    
+    expect(responseBody).to.have.property('first_letter');
+    expect(responseBody.first_letter).to.equal('z');
+  
+    expect(responseBody).to.have.property('word');
+    expect(responseBody.word).to.include('z');
+    expect(responseBody.word).to.match(/^z/);
+  });
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Anagrams of
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{host}}/anagrams/:word
+  body: none
+  auth: inherit
+}
+
+params:path {
+  word: niche
+}

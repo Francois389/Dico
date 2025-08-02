@@ -1,0 +1,27 @@
+{
+  "version": "1",
+  "name": "Dico",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ],
+  "size": 0,
+  "filesCount": 0,
+  "presets": {
+    "requestType": "http",
+    "requestUrl": "localhost:4242"
+  },
+  "proxy": {
+    "bypassProxy": "",
+    "enabled": "global",
+    "auth": {
+      "enabled": false,
+      "username": "",
+      "password": ""
+    },
+    "port": null,
+    "hostname": "",
+    "protocol": "http"
+  }
+}

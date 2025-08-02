@@ -1,0 +1,32 @@
+meta {
+  name: 1 Word by Length
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/word/length/:length
+  body: none
+  auth: inherit
+}
+
+params:path {
+  length: 5
+}
+
+tests {
+  test("should return a word with 5 character", function() {
+    expect(res.getStatus()).to.equal(200);
+    
+    expect(res.getHeader('content-type')).to.contain('application/json');
+    
+    const responseBody = res.getBody();
+    expect(responseBody).to.be.an('object');
+    
+    expect(responseBody).to.have.property('length');
+    expect(responseBody.length).to.equal(5);
+  
+    expect(responseBody).to.have.property('word');
+    expect(responseBody.word).to.match(/.{5}/);
+  });
+}
