@@ -1,0 +1,29 @@
+server:
+    http_listen_port: 3200
+
+distributor:
+    receivers:
+        jaeger:
+            protocols:
+                thrift_http:
+                grpc:
+                thrift_binary:
+                thrift_compact:
+        zipkin:
+        otlp:
+            protocols:
+                http:
+                grpc:
+        opencensus:
+
+storage:
+    trace:
+        backend: local
+        local:
+            path: /tmp/tempo/traces
+        pool:
+            max_workers: 100
+            queue_depth: 10000
+
+overrides:
+    metrics_generator_processors: [ service-graphs, span-metrics ]
