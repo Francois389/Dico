@@ -5,3 +5,4 @@ api/populate/mots.txt
 
 desktop.ini
 *.exe
+.idea/vcs.xml
