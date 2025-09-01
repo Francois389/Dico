@@ -3,6 +3,7 @@ package main
 import (
 	"api/db"
 	"api/word"
+	"flag"
 	"fmt"
 	"os"
 
@@ -10,6 +11,9 @@ import (
 )
 
 func main() {
+	verbose := flag.Bool("v", false, "Display all error")
+	flag.Parse()
+
 	fmt.Println("Starting...")
 
 	url := os.Getenv("MONGO_URI")
@@ -27,7 +31,11 @@ func main() {
 	err := db.Init(url, databaseName, collectionName)
 	if err != nil {
 		fmt.Println("Error while connecting to the database")
-		fmt.Println(err)
+		if *verbose {
+			fmt.Println(err)
+		} else {
+			fmt.Println("Use -v flag for detailed error information")
+		}
 		return
 	}
 	fmt.Println("Connected to the database")
@@ -40,7 +48,12 @@ func main() {
 	err = r.Run(port)
 	if err != nil {
 		fmt.Println("Error while starting the server")
-		panic(err)
+		if *verbose {
+			panic(err)
+		} else {
+			fmt.Println("Server failed to start. Use -v flag for detailed error information")
+			return
+		}
 	}
 
 	defer func() {
