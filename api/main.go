@@ -50,10 +50,8 @@ func main() {
 		fmt.Println("Error while starting the server")
 		if *verbose {
 			panic(err)
-		} else {
-			fmt.Println("Server failed to start. Use -v flag for detailed error information")
-			return
 		}
+		fmt.Println("Server failed to start. Use -v flag for detailed error information")
 	}
 
 	defer func() {
