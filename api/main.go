@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	verbose := flag.Bool("v", false, "Display all error")
+	verbose := flag.Bool("v", false, "Display all errors")
 	flag.Parse()
 
 	fmt.Println("Starting...")
