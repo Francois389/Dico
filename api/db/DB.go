@@ -3,10 +3,11 @@ package db
 import (
 	"context"
 	"fmt"
-	"go.mongodb.org/mongo-driver/v2/mongo"
-	"go.mongodb.org/mongo-driver/v2/mongo/options"
 	"sync"
 	"time"
+
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 type Singleton struct {
@@ -47,7 +48,6 @@ func getClient(ctx context.Context, url string) (*mongo.Client, error) {
 		return nil, fmt.Errorf("unable to ping the database: %v", err)
 	}
 
-	fmt.Println("Connected to database")
 	return client, nil
 }
 

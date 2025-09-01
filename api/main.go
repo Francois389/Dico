@@ -20,14 +20,17 @@ func main() {
 	if databaseName == "" {
 		databaseName = "dico-db"
 	}
+	fmt.Println("Connecting to " + url + "/" + databaseName)
 	collectionName := "mots"
 
+	fmt.Println("Connecting to the database...")
 	err := db.Init(url, databaseName, collectionName)
 	if err != nil {
 		fmt.Println("Error while connecting to the database")
 		fmt.Println(err)
 		return
 	}
+	fmt.Println("Connected to the database")
 
 	r := gin.Default()
 
