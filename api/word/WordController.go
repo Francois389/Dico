@@ -3,10 +3,11 @@ package word
 import (
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"go.mongodb.org/mongo-driver/v2/mongo"
 	"net/http"
 	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/v2/mongo"
 )
 
 func SetUpRoutes(c *gin.Engine) {
@@ -15,6 +16,7 @@ func SetUpRoutes(c *gin.Engine) {
 	c.GET("/word/length/:length", getWordLength)
 	c.GET("/anagrams/:word", getAnagrams)
 	c.GET("/words-batch/:letters", getWordsBatch)
+	c.POST("/check", checkWordExistence)
 }
 
 const InvalidFirstLetter = "invalid first letter. Expected one character"
@@ -101,6 +103,25 @@ func getWordsBatch(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, words)
+}
+
+func checkWordExistence(c *gin.Context) {
+	var json struct {
+		Word string `json:"word" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&json); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Word is required", "example": gin.H{"word": "exemple"}})
+		return
+	}
+	word := json.Word
+
+	exists, err := CheckWordExistence(word)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"exists": exists})
+	}
 }
 
 func noWordStartWith(firstLetter string) gin.H {

@@ -1,0 +1,22 @@
+meta {
+  name: Check word doesn't exist
+  type: http
+  seq: 8
+}
+
+post {
+  url: {{host}}/check
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "word": "aaaaaa"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}

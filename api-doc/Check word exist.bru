@@ -1,0 +1,22 @@
+meta {
+  name: Check word exist
+  type: http
+  seq: 6
+}
+
+post {
+  url: {{host}}/check
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "word": "aigle"
+  }
+}
+
+settings {
+  encodeUrl: true
+  timeout: 0
+}
