@@ -18,7 +18,7 @@ func main() {
 
 	url := os.Getenv("MONGO_URI")
 	if url == "" {
-		url = "mongodb://localhost:27017/dico-db"
+		url = "mongodb://localhost:27027/dico-db"
 	}
 	databaseName := os.Getenv("MONGO_DB")
 	if databaseName == "" {
