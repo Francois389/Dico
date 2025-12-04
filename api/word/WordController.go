@@ -109,8 +109,8 @@ func checkWordExistence(c *gin.Context) {
 	var json struct {
 		Word string `json:"word" binding:"required"`
 	}
-	if err := c.ShouldBindJSON(&json); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Word is required", "example": gin.H{"word": "exemple"}})
+	if c.ShouldBindJSON(&json) != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Word is required", "example": gin.H{"word": "example"}})
 		return
 	}
 	word := json.Word
@@ -119,9 +119,9 @@ func checkWordExistence(c *gin.Context) {
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
-	} else {
-		c.JSON(http.StatusOK, gin.H{"exists": exists})
+		return
 	}
+	c.JSON(http.StatusOK, gin.H{"exists": exists})
 }
 
 func noWordStartWith(firstLetter string) gin.H {

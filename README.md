@@ -211,7 +211,7 @@ Si le mot n'est pas fourni dans le body, une erreur sera renvoyé :
 {
   "error": "Word is required",
   "example": {
-    "word": "exemple"
+    "word": "example"
   }
 }
 ```
@@ -415,7 +415,7 @@ Check if the provided word exists in the database.
 
 ```json
 {
-  "word": "motàvérifier"
+  "word": "wordtocheck"
 }
 ```
 
@@ -428,7 +428,7 @@ If the word is not provided in the body, an error will be returned:
 {
   "error": "Word is required",
   "example": {
-    "word": "exemple"
+    "word": "example"
   }
 }
 ```

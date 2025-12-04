@@ -71,7 +71,7 @@ func Init(url, databaseName, collectionName string) error {
 
 	client, err := getClient(ctx, url)
 	if err != nil {
-		return fmt.Errorf("error during client initialization: \n%v", err)
+		return fmt.Errorf("error during client initialization: %v", err)
 	}
 
 	instance.client = client
