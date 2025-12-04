@@ -140,3 +140,17 @@ func GetWordsBatch(letters string) []models.Word {
 
 	return words
 }
+
+func CheckWordExistence(word string) (bool, error) {
+	collection := db.GetCollection()
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	count, err := collection.CountDocuments(ctx, bson.D{{"word", word}})
+
+	if err != nil {
+		return false, err
+	}
+	return 0 < count, nil
+}

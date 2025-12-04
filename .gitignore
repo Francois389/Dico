@@ -6,3 +6,4 @@ api/populate/mots.txt
 desktop.ini
 *.exe
 .idea/vcs.xml
+.idea/copilot.data.migration.*.xml

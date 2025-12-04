@@ -50,7 +50,7 @@ Tous les résultats de mots sont renvoyé sous cette forme :
 }
 ```
 
-### 1. `words/{lettre}`
+### 1. `GET words/{lettre}`
 
 Renvoie tous les mots qui commencent par la lettre fournie
 
@@ -83,7 +83,7 @@ Exemple : `words/╚` renverra cette erreur.
 
 </details>
 
-### 2. `word/{lettre}`
+### 2. `GET word/{lettre}`
 
 Renvoie un mot choisi aléatoirement qui commence par la lettre fournie.
 
@@ -116,7 +116,7 @@ Exemple : `word/╚` renverra cette erreur.
 
 </details>
 
-### 3. `word/length/{length}`
+### 3. `GET word/length/{length}`
 
 Renvoie un mot choisi aléatoirement qui a la longueur demandée
 
@@ -149,7 +149,7 @@ Exemple : `word/length/111` renverra cette erreur.
 
 </details>
 
-### 4. `anagrams/{mot}`
+### 4. `GET anagrams/{mot}`
 
 Renvoie tous les anagrammes du mot fourni
 
@@ -170,7 +170,7 @@ Exemple : `anagrams/aaaaaaaa` renverra cette erreur.
 
 </details>
 
-### 5. `words-batch/{lettres}`
+### 5. `GET words-batch/{lettres}`
 
 Renvoie pour chaque lettre fournie, un mot qui commence par cette lettre
 
@@ -188,6 +188,34 @@ Renvoie pour chaque lettre fournie, un mot qui commence par cette lettre
 ```
 
 Exemple : `words-batch/&é` renverra cette erreur.
+</details>
+
+### 6. `POST check`
+
+Vérifie si le mot fourni existe dans la base de donnée.
+
+#### Body (Format JSON)
+
+```json
+{
+  "word": "motàvérifier"
+}
+```
+
+<details>
+  <summary>Erreur possible</summary>
+Si le mot n'est pas fourni dans le body, une erreur sera renvoyé :
+`400 Bad Request`
+
+```json
+{
+  "error": "Word is required",
+  "example": {
+    "word": "example"
+  }
+}
+```
+
 </details>
 
 <hr>
@@ -239,7 +267,7 @@ All word results are returned in this form:
 }
 ```
 
-### 1. `words/{letter}`
+### 1. `GET words/{letter}`
 
 Returns all words that start with the letter provided
 
@@ -272,7 +300,7 @@ Example : `words/╚` will return this error.
 
 </details>
 
-### 2. `word/{letter}`
+### 2. `GET word/{letter}`
 
 Returns a randomly chosen word that begins with the letter provided.
 
@@ -305,7 +333,7 @@ Example : `word/╚` will return this error.
 
 </details>
 
-### 3. `word/length/{length}`
+### 3. `GET word/length/{length}`
 
 Returns a randomly chosen word that has the requested length
 
@@ -338,7 +366,7 @@ Example: `word/length/111` will return this error.
 
 </details>
 
-### 4. `anagrams/{word}`
+### 4. `GET anagrams/{word}`
 
 Returns all anagrams of the word provided
 
@@ -359,7 +387,7 @@ Example: `anagrams/aaaaaaaa` will return this error.
 
 </details>
 
-### 5. `words-batch/{letters}`
+### 5. `GET words-batch/{letters}`
 
 Returns for each letter provided, a word that begins with that letter
 
@@ -377,4 +405,32 @@ Returns for each letter provided, a word that begins with that letter
 ```
 
 Example: `words-batch/&é` will return this error.
+</details>
+
+### 6. `POST check`
+
+Check if the provided word exists in the database.
+
+#### Body (Format JSON)
+
+```json
+{
+  "word": "wordtocheck"
+}
+```
+
+<details>
+  <summary>Possible error</summary>
+If the word is not provided in the body, an error will be returned:
+`400 Bad Request`
+
+```json
+{
+  "error": "Word is required",
+  "example": {
+    "word": "example"
+  }
+}
+```
+
 </details>
