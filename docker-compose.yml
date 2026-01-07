@@ -6,12 +6,31 @@ services:
             - MONGO_INITDB_DATABASE=dico-db
         ports:
             - "27027:27017"
+        volumes:
+            - ./mongo-data:/data/db
         healthcheck:
             test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
             interval: 10s
             timeout: 5s
             retries: 5
             start_period: 20s
+
+    dico-populate:
+        profiles:
+            - init
+        build:
+            context: .
+            dockerfile: Dockerfile.populate
+            args:
+                - WORDS_FILE=${WORDS_FILE:-populate/mots.txt}
+        container_name: dico-populate
+        environment:
+            - MONGO_URI=mongodb://dico-db:27017/dico-db
+            - MONGO_DB=dico-db
+        depends_on:
+            dico-db:
+                condition: service_healthy
+        restart: "no"
 
     dico:
         build:
@@ -26,16 +45,3 @@ services:
         environment:
             - MONGO_URI=mongodb://dico-db:27017/dico-db
             - MONGO_DB=dico-db
-
-    populate:
-        profiles: [first-start]
-        build:
-            context: .
-            dockerfile: Dockerfile.populate
-        depends_on:
-            dico-db:
-                condition: service_healthy
-        environment:
-            - MONGO_URI=mongodb://dico-db:27017/dico-db
-            - MONGO_DB=dico-db
-        restart: "no"
