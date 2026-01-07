@@ -2,7 +2,7 @@ FROM golang:1.24-bookworm AS build
 
 WORKDIR /app
 
-# D'abord, copier TOUS les fichiers nécessaires avant de faire go get
+# populate.go require some file from /api
 COPY api/go.mod api/go.sum ./api/
 COPY api/db ./api/db
 COPY api/models ./api/models
@@ -10,7 +10,7 @@ COPY api/models ./api/models
 COPY populate/go.mod populate/go.sum ./populate/
 COPY populate/populate.go ./populate/
 
-# Maintenant on peut faire go get car tous les modules sont présents
+# resolve dependcies
 WORKDIR /app/populate
 RUN go get .
 
@@ -18,13 +18,10 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o populate
 
 FROM gcr.io/distroless/base-debian11 AS release
 
-# Argument pour le chemin du fichier texte
 ARG WORDS_FILE=populate/mots.txt
 
 COPY --from=build /app/populate/populate /populate
-# Copier le fichier de mots
 COPY ${WORDS_FILE} /mots.txt
 
 USER nonroot
-# Commande par défaut
 CMD ["/populate","-clear"]
