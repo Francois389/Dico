@@ -25,5 +25,6 @@ COPY --from=build /app/populate/populate /populate
 # Copier le fichier de mots
 COPY ${WORDS_FILE} /mots.txt
 
+USER nonroot
 # Commande par défaut
-CMD ["/populate"]
+CMD ["/populate","-clear"]

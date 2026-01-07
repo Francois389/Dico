@@ -19,5 +19,6 @@ COPY --from=build /build/dico /dico
 # Document the port that may need to be published
 EXPOSE 4242
 
+USER nonroot
 # Start the application
 CMD ["/dico"]
