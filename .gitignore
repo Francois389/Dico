@@ -7,3 +7,4 @@ desktop.ini
 *.exe
 .idea/vcs.xml
 .idea/copilot.data.migration.*.xml
+mongo-data

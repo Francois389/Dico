@@ -1,5 +1,5 @@
-# Use Go 1.24 bookworm as base image
-FROM golang:1.24-bookworm AS base
+# Use Go 1.24 bookworm as build image
+FROM golang:1.24-bookworm AS build
 
 # Move to working directory /build
 WORKDIR /build
@@ -9,11 +9,16 @@ COPY api ./
 
 ENV GIN_MODE=release
 
-RUN go get .\
-    & go build -o dico
+RUN go get .
+RUN CGO_ENABLED=0 GOOS=linux go build -o dico
+
+FROM gcr.io/distroless/base-debian11 AS release
+
+COPY --from=build /build/dico /dico
 
 # Document the port that may need to be published
 EXPOSE 4242
 
+USER nonroot
 # Start the application
-CMD ["/build/dico"]
+CMD ["/dico"]

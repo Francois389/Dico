@@ -1,14 +1,27 @@
-FROM golang:1.24-bookworm
+FROM golang:1.24-bookworm AS build
 
 WORKDIR /app
-COPY populate ./populate
-COPY api ./api
 
-# Install dependencies
+# populate.go require some file from /api
+COPY api/go.mod api/go.sum ./api/
+COPY api/db ./api/db
+COPY api/models ./api/models
+
+COPY populate/go.mod populate/go.sum ./populate/
+COPY populate/populate.go ./populate/
+
+# resolve dependcies
 WORKDIR /app/populate
 RUN go get .
-WORKDIR /app/api
-RUN go get .
 
-WORKDIR /app/populate
-CMD ["go", "run", ".", "-clear"]
+RUN CGO_ENABLED=0 GOOS=linux go build -o populate
+
+FROM gcr.io/distroless/base-debian11 AS release
+
+ARG WORDS_FILE=populate/mots.txt
+
+COPY --from=build /app/populate/populate /populate
+COPY ${WORDS_FILE} /mots.txt
+
+USER nonroot
+CMD ["/populate","-clear"]
